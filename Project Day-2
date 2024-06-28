@@ -1,0 +1,76 @@
+# PROBLEM STATEMENT - 8  (Visualise the housing data)
+
+#Visualize the following data for each state using appropriate methods:	
+#* Number of households for 100 people 
+#* Percentage of households that have toilet(s) in premise to the total number of households.
+#* Urban to rural population ratio. 
+
+import pandas as pd
+import matplotlib.pyplot as plt
+df = pd.read_csv('/content/modified_file_final.csv')
+
+missing_percentage_before = (df.isnull().sum() / len(df)) * 100
+df['Population'].fillna(df['Male'] + df['Female'], inplace=True)
+df['Literate'].fillna(df['Literate_Male']+df['Literate_Female'],inplace=True)
+df['Population'].fillna(df['Young_and_Adult']+df['Middle_Aged']+df['Senior_Citizen']+df['Age_Not_Stated'])
+df['Households'].fillna(df['Households_Rural']+df['Households_Urban'])
+missing_percentage_after = (df.isnull().sum() / len(df)) * 100
+fig, ax = plt.subplots(figsize=(20, 15))
+
+bar_width = 0.35
+before = ax.bar(missing_percentage_before.index, missing_percentage_before, bar_width, label='Before Filling', color='red')
+after = ax.bar(missing_percentage_after.index, missing_percentage_after, bar_width, label='After Filling', color='orange')
+
+ax.set_ylabel('Percentage of Missing Data')
+ax.set_title('Missing Data Before and After Filling')
+ax.set_xticklabels(df.columns, rotation=45)
+ax.legend()
+
+plt.tight_layout()
+plt.show()
+
+# PROBLEM STATEMENT -9 (Inconsistency in different datasets)
+
+# After the updates, the “Households_Rural” and “Households_Urban” data are redundant in both housing and census data.
+# Compare the two data and see if there is a major difference between the values in the two files. 
+# A difference of more than 10% can be considered a major difference.
+# Report the names of the districts where a major difference is found in the data. 
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+census_df = pd.read_csv('/content/modified_file_final.csv')
+
+missing_percentage_before = (census_df.isnull().sum() / len(df)) * 100
+print("Percentage of Missing Data:")
+print(missing_percentage)
+
+df['Population'] = df['Male'].fillna(0) + df['Female'].fillna(0)
+df['Literate'] = df['Literate_Male'].fillna(0) + df['Literate_Female'].fillna(0)
+df['Population'] = df['Young_and_Adult'].fillna(0) + df['Middle_Aged'].fillna(0) + df['Senior_Citizen'].fillna(0) + df['Age_Not_Stated'].fillna(0)
+df['Households'] = df['Households_Rural'].fillna(0) + df['Households_Urban'].fillna(0)
+
+missing_percentage_after = (df.isnull().sum() / len(df)) * 100
+print("Percentage of Missing Data After Filling:")
+print(missing_percentage_after)
+
+fig, ax = plt.subplots(figsize=(20, 15))
+bar_width = 0.40
+index = range(len(df.columns))
+
+bar1 = ax.bar(index, missing_percentage_before, bar_width, label='Before Filling', color='skyblue')
+bar2 = ax.bar([i + bar_width for i in index], missing_percentage_after, bar_width, label='After Filling', color='red')
+
+ax.set_xlabel('Columns')
+ax.set_ylabel('Percentage of Missing Data')
+ax.set_title('Missing Data Before and After Filling')
+ax.set_xticks([i + bar_width / 2 for i in index])
+ax.set_xticklabels(df.columns, rotation=45, ha='right')
+ax.legend()
+
+plt.tight_layout()
+plt.show()
+
+
+df.to_csv('census.csv',index=False)
